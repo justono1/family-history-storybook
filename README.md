@@ -1,6 +1,6 @@
-# Turborepo starter
+# Family Story Creator
 
-This Turborepo starter is maintained by the Turborepo core team.
+Family Story Creator helps guide users by working with them to request information about a particular family member and generate a tory about their life.
 
 ## Using this example
 
@@ -16,6 +16,7 @@ This Turborepo includes the following packages/apps:
 
 ### Apps and Packages
 
+- `ai-server`: a [mastra.js](https://mastra.ai/) app
 - `docs`: a [Next.js](https://nextjs.org/) app
 - `web`: another [Next.js](https://nextjs.org/) app
 - `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
