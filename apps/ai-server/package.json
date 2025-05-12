@@ -20,6 +20,7 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
+    "@mastra/mcp-docs-server": "^0.0.13",
     "@types/node": "^22.15.17",
     "mastra": "^0.6.3-alpha.1",
     "typescript": "^5.8.3"
