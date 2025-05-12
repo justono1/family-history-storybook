@@ -1,6 +1,6 @@
-# Family Story Creator
+# Family History Storybook
 
-Family Story Creator helps guide users by working with them to request information about a particular family member and generate a tory about their life.
+Family History Storybook helps users uncover and share meaningful details about a family member’s life. By guiding them through thoughtful prompts and questions, it encourages the recall of memories and anecdotes they may not have otherwise considered. Once the information is gathered, Family History Storybook collaborates with the user to craft a compelling narrative about their loved one’s life.
 
 ## Using this example
 
