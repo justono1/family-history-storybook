@@ -58,7 +58,7 @@ const provideMoreInsight = createStep({
       },
       {
         role: "user",
-        content: resumeData.feedback,
+        content: feedback,
       },
     ]);
 
