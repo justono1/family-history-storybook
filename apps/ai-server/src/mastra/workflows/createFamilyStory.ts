@@ -6,12 +6,6 @@ import {
   familyMemberHistoryFeedbackSchema,
 } from "@/schemas";
 
-export const createFamilyStory = createWorkflow({
-  id: "create-family-story",
-  inputSchema: familyMemberBaseSchema,
-  outputSchema: familyMemberStorySchema,
-});
-
 const summarizeAndAskAdditionalQuestions = createStep({
   id: "summarize-and-ask-additional",
   description:
@@ -71,3 +65,11 @@ const provideMoreInsight = createStep({
     return { history: JSON.parse(result.text) };
   },
 });
+
+
+export const createFamilyStory = createWorkflow({
+  id: "create-family-story",
+  inputSchema: familyMemberBaseSchema,
+  outputSchema: familyMemberStorySchema,
+  steps: [summarizeAndAskAdditionalQuestions, provideMoreInsight],
+}).then(summarizeAndAskAdditionalQuestions).then(provideMoreInsight).commit();
