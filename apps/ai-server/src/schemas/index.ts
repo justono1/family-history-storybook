@@ -15,10 +15,6 @@ export const familyMemberBaseSchema = z.object({
   occupation: z.string(),
 });
 
-export const familyMemberHistoryFeedbackSchema = z.object({
-  feedback: z.string(),
-});
-
 // export const storytellerSettingsSchema = z.object({
 //   tone: z
 //     .enum(["warm", "formal", "conversational", "dramatic", "nostalgic"])
