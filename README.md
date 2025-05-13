@@ -1,6 +1,6 @@
-# Family History Storybook
+# Family History Storybooks
 
-Family History Storybook helps users uncover and share meaningful details about a family member’s life. By guiding them through thoughtful prompts and questions, it encourages the recall of memories and anecdotes they may not have otherwise considered. Once the information is gathered, Family History Storybook collaborates with the user to craft a compelling narrative about their loved one’s life.
+Family History Storybooks helps users uncover and share meaningful details about a family member’s life. By guiding them through thoughtful prompts and questions, it encourages the recall of memories and anecdotes they may not have otherwise considered. Once the information is gathered, Family History Storybooks collaborates with the user to craft a compelling narrative about their loved one’s life.
 
 ## Using this example
 
