@@ -63,6 +63,7 @@ const provideMoreContext = createStep({
   suspendSchema: familyMemberHistorySchema,
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     try {
+      // check for is feedback and also isSatisfied. Feedback might not be given but isSatisfied could be true
       if (!resumeData?.feedback && !resumeData?.isSatisfied) {
         await suspend({ history: inputData?.history });
         return {
@@ -70,7 +71,7 @@ const provideMoreContext = createStep({
         };
       }
 
-      const { feedback } = resumeData;
+      const { feedback, isSatisfied } = resumeData;
 
       const result = await mastra.getAgent(FAMILY_HISTORIAN_AGENT).generate([
         {
@@ -85,6 +86,14 @@ const provideMoreContext = createStep({
 
       if (!result || typeof result.text !== "string") {
         throw new Error("Agent did not return valid history text");
+      }
+
+      // throw back to suspend to basically loops this until a user says ok each time with the feedback
+      if (!isSatisfied) {
+        await suspend({ history: result.text });
+        return {
+          history: result.text,
+        };
       }
 
       return { history: result.text };
@@ -149,6 +158,7 @@ const provideStoryFeedback = createStep({
   suspendSchema: familyMemberStorySchema,
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     try {
+      // check for is feedback and also isSatisfied. Feedback might not be given but isSatisfied could be true
       if (!resumeData?.feedback && !resumeData?.isSatisfied) {
         await suspend({ story: inputData?.story });
         return {
@@ -156,7 +166,7 @@ const provideStoryFeedback = createStep({
         };
       }
 
-      const { feedback } = resumeData;
+      const { feedback, isSatisfied } = resumeData;
 
       const result = await mastra.getAgent(FAMILY_STORYTELLER_AGENT).generate([
         {
@@ -171,6 +181,14 @@ const provideStoryFeedback = createStep({
 
       if (!result || typeof result.text !== "string") {
         throw new Error("Agent did not return valid story text");
+      }
+
+      // throw back to suspend to basically loops this until a user says ok each time with the feedback
+      if (!isSatisfied) {
+        await suspend({ story: result.text });
+        return {
+          story: result.text,
+        };
       }
 
       return { story: result.text };
