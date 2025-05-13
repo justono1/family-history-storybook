@@ -1,8 +1,8 @@
 import { Mastra } from "@mastra/core/mastra";
 import { LibSQLStore } from "@mastra/libsql";
 import { createLogger } from "@mastra/core/logger";
-import { familyHistorianAgent, familyStorytellerAgent } from "@/mastra/agents";
-import { createFamilyStory } from "@/mastra/workflows";
+import { familyHistorianAgent, familyStorytellerAgent } from "@/agents";
+import { createFamilyStory } from "@/workflows";
 
 export const mastra = new Mastra({
   agents: { familyHistorianAgent, familyStorytellerAgent },
