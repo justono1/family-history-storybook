@@ -10,7 +10,6 @@ export const mastra = new Mastra({
     createFamilyStory,
   },
   storage: new LibSQLStore({
-    // stores telemetry, evals, ... into memory storage, if it needs to persist, change to file:../mastra.db
     url: ":memory:",
   }),
   logger: createLogger({
