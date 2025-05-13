@@ -15,6 +15,16 @@ export const familyMemberBaseSchema = z.object({
   occupation: z.string(),
 });
 
+export const generalFeedbackSchema = z
+  .object({
+    feedback: z.string().optional(),
+    isSatisfied: z.boolean().optional().default(false),
+  })
+  .refine((data) => data.feedback !== undefined || data.isSatisfied === true, {
+    message: "When no feedback is given, isSatisfied must be true",
+    path: ["isSatisfied"],
+  });
+
 // export const storytellerSettingsSchema = z.object({
 //   tone: z
 //     .enum(["warm", "formal", "conversational", "dramatic", "nostalgic"])

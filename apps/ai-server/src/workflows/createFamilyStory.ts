@@ -3,6 +3,7 @@ import {
   familyMemberBaseSchema,
   familyMemberStorySchema,
   familyMemberHistorySchema,
+  generalFeedbackSchema,
 } from "@/schemas";
 import { z } from "zod";
 
@@ -40,8 +41,10 @@ const summarizeAndAskAdditionalQuestions = createStep({
 
       return { history: result.text };
     } catch (err) {
-      console.error('Error in summarizeAndAskAdditionalQuestions:', err);
-      throw new Error(`summarizeAndAskAdditionalQuestions failed: ${err instanceof Error ? err.message : String(err)}`);
+      console.error("Error in summarizeAndAskAdditionalQuestions:", err);
+      throw new Error(
+        `summarizeAndAskAdditionalQuestions failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   },
 });
@@ -56,10 +59,7 @@ const provideMoreContext = createStep({
     "Allows the user to continuously add more context to the family member",
   inputSchema: familyMemberHistorySchema,
   outputSchema: familyMemberHistorySchema,
-  resumeSchema: z.object({
-    feedback: z.string(),
-    isSatisfied: z.boolean().optional().default(false),
-  }),
+  resumeSchema: generalFeedbackSchema,
   suspendSchema: familyMemberHistorySchema,
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     try {
@@ -79,7 +79,7 @@ const provideMoreContext = createStep({
         },
         {
           role: "user",
-          content: feedback,
+          content: feedback ? feedback : "No further feedback",
         },
       ]);
 
@@ -89,8 +89,10 @@ const provideMoreContext = createStep({
 
       return { history: result.text };
     } catch (err) {
-      console.error('Error in provideMoreContext:', err);
-      throw new Error(`provideMoreContext failed: ${err instanceof Error ? err.message : String(err)}`);
+      console.error("Error in provideMoreContext:", err);
+      throw new Error(
+        `provideMoreContext failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   },
 });
@@ -125,8 +127,10 @@ const generateStoryAndAskForFeedback = createStep({
 
       return { story: result.text };
     } catch (err) {
-      console.error('Error in generateStoryAndAskForFeedback:', err);
-      throw new Error(`generateStoryAndAskForFeedback failed: ${err instanceof Error ? err.message : String(err)}`);
+      console.error("Error in generateStoryAndAskForFeedback:", err);
+      throw new Error(
+        `generateStoryAndAskForFeedback failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   },
 });
@@ -141,10 +145,7 @@ const provideStoryFeedback = createStep({
     "Allows the user to interact and provide feedback. If satisfied with the story and no more feedback is requested then resume",
   inputSchema: familyMemberStorySchema,
   outputSchema: familyMemberStorySchema,
-  resumeSchema: z.object({
-    feedback: z.string(),
-    isSatisfied: z.boolean().optional().default(false),
-  }),
+  resumeSchema: generalFeedbackSchema,
   suspendSchema: familyMemberStorySchema,
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     try {
@@ -164,7 +165,7 @@ const provideStoryFeedback = createStep({
         },
         {
           role: "user",
-          content: feedback,
+          content: feedback ? feedback : "No further feedback",
         },
       ]);
 
@@ -174,8 +175,10 @@ const provideStoryFeedback = createStep({
 
       return { story: result.text };
     } catch (err) {
-      console.error('Error in provideStoryFeedback:', err);
-      throw new Error(`provideStoryFeedback failed: ${err instanceof Error ? err.message : String(err)}`);
+      console.error("Error in provideStoryFeedback:", err);
+      throw new Error(
+        `provideStoryFeedback failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   },
 });
@@ -188,7 +191,12 @@ export const createFamilyStory = createWorkflow({
   id: "create-family-story",
   inputSchema: familyMemberBaseSchema,
   outputSchema: familyMemberStorySchema,
-  steps: [summarizeAndAskAdditionalQuestions, provideMoreContext],
+  steps: [
+    summarizeAndAskAdditionalQuestions,
+    provideMoreContext,
+    generateStoryAndAskForFeedback,
+    provideStoryFeedback,
+  ],
 })
   .then(summarizeAndAskAdditionalQuestions)
   .then(provideMoreContext)
