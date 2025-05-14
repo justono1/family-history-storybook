@@ -1,0 +1,45 @@
+/* Container layout for label, input, and error message */
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+/* Style for input label */
+.label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+/* Base input styling */
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #626262;
+  border-radius: 4px;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+/* Placeholder styling */
+.input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+/* Focus state for input */
+.input:focus {
+  outline: none;
+  border-color: #2684ff;
+  box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.3);
+}
+/* Error state for input */
+.error {
+  border-color: #d32f2f !important;
+}
+/* Error message styling */
+.errorMessage {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #d32f2f;
+}
