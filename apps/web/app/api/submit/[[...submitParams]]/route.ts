@@ -1,25 +1,37 @@
 import { NextResponse } from "next/server";
 import { getFamilyStoryWorkflow } from "../mastraClient";
 
-export async function POST(request: Request) {
+export async function POST(request: Request, { params }: { params: { submitParams?: string[] } }) {
   try {
-    const { name, dateOfBirth, hometown, occupation } = await request.json();
-    // Get workflow instance
+    const submitParams = params?.submitParams || [];
     const workflow = getFamilyStoryWorkflow();
-    // Create a new run
-    const run = await workflow.createRun();
-    // Start the workflow asynchronously with the input data
-    const result = await workflow.startAsync({
-      runId: run.runId,
-      inputData: { name, dateOfBirth, hometown, occupation },
-    });
-    // Return the workflow result
-    return NextResponse.json({ result });
+
+    if (submitParams[0] === "resume") {
+      // Resume logic
+      const { runId, step, resumeData } = await request.json();
+      if (!runId || !step || !resumeData) {
+        return NextResponse.json(
+          { error: "Missing runId, step, or resumeData for resume." },
+          { status: 400 }
+        );
+      }
+      const result = await workflow.resumeAsync({ runId, step, resumeData });
+      return NextResponse.json({ result });
+    } else {
+      // Start logic (default)
+      const { name, dateOfBirth, hometown, occupation } = await request.json();
+      const run = await workflow.createRun();
+      const result = await workflow.startAsync({
+        runId: run.runId,
+        inputData: { name, dateOfBirth, hometown, occupation },
+      });
+      return NextResponse.json({ result });
+    }
   } catch (error: any) {
-    // Handle errors from workflow or input
     return NextResponse.json(
       { error: error?.message || "Unknown error" },
       { status: 500 }
     );
   }
 }
+
