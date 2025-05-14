@@ -8,13 +8,13 @@ import InputTextarea from "./components/InputTextarea/InputTextarea";
 import InputCheckbox from "./components/InputCheckbox/InputCheckbox";
 
 // Types for form steps
-type Step1Form = {
+type InitialData = {
   name: string;
   dateOfBirth: string;
   hometown: string;
   occupation: string;
 };
-type Step2Form = {
+type FeedbackData = {
   feedback: string;
   isSatisfied: boolean;
 };
@@ -25,8 +25,8 @@ export default function Home() {
     register: register1,
     handleSubmit: handleSubmit1,
     formState: { errors: errors1, isSubmitting: isSubmitting1 },
-  } = useForm<Step1Form>();
-  const onSubmitStep1: SubmitHandler<Step1Form> = async (data) => {
+  } = useForm<InitialData>();
+  const onSubmitStep1: SubmitHandler<InitialData> = async (data) => {
     try {
       // const res = await fetch("/api/step1", {
       //   method: "POST",
@@ -46,8 +46,8 @@ export default function Home() {
     register: register2,
     handleSubmit: handleSubmit2,
     formState: { errors: errors2, isSubmitting: isSubmitting2 },
-  } = useForm<Step2Form>();
-  const onSubmitStep2: SubmitHandler<Step2Form> = async (data) => {
+  } = useForm<FeedbackData>();
+  const onSubmitStep2: SubmitHandler<FeedbackData> = async (data) => {
     try {
       // const res = await fetch("/api/step2", {
       //   method: "POST",
