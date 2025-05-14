@@ -1,6 +1,14 @@
+/* globals.css */
+
+/*──────────────────────────────────────────────────────────────────────────────
+  Color theme variables
+──────────────────────────────────────────────────────────────────────────────*/
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -10,41 +18,108 @@
   }
 }
 
-html,
-body {
+/*──────────────────────────────────────────────────────────────────────────────
+  Box model & reset
+──────────────────────────────────────────────────────────────────────────────*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/*──────────────────────────────────────────────────────────────────────────────
+  Layout constraints
+──────────────────────────────────────────────────────────────────────────────*/
+html {
   max-width: 100vw;
   overflow-x: hidden;
+
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  -webkit-text-size-adjust: 100%;
 }
 
+/*──────────────────────────────────────────────────────────────────────────────
+  Base typography & theme
+──────────────────────────────────────────────────────────────────────────────*/
 body {
-  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
   background: var(--background);
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+  color: var(--foreground);
   margin: 0;
 }
 
+/*──────────────────────────────────────────────────────────────────────────────
+  Headings
+──────────────────────────────────────────────────────────────────────────────*/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2.488rem;
+}
+h2 {
+  font-size: 2.074rem;
+}
+h3 {
+  font-size: 1.728rem;
+}
+h4 {
+  font-size: 1.44rem;
+}
+h5 {
+  font-size: 1.2rem;
+}
+h6 {
+  font-size: 1rem;
+}
+
+/*──────────────────────────────────────────────────────────────────────────────
+  Body copy & lists
+──────────────────────────────────────────────────────────────────────────────*/
+p {
+  margin-bottom: 1em;
+}
+
+ul,
+ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+/*──────────────────────────────────────────────────────────────────────────────
+  Links
+──────────────────────────────────────────────────────────────────────────────*/
 a {
   color: inherit;
   text-decoration: none;
 }
 
-.imgDark {
-  display: none;
+/*──────────────────────────────────────────────────────────────────────────────
+  Responsive media
+──────────────────────────────────────────────────────────────────────────────*/
+img,
+video {
+  max-width: 100%;
+  height: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+/*──────────────────────────────────────────────────────────────────────────────
+  Form elements inherit
+──────────────────────────────────────────────────────────────────────────────*/
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
