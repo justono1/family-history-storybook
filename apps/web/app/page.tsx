@@ -1,7 +1,9 @@
 import Image, { type ImageProps } from "next/image";
 import { FaGithub } from "react-icons/fa";
-import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
+import Input from "./components/Input/Input";
+import Button from "./components/Button/Button";
+import InputTextarea from "./components/InputTextarea/InputTextarea";
 
 export default function Home() {
   return (
@@ -18,7 +20,13 @@ export default function Home() {
       </nav>
       <main className={styles.main}>
         {/* ← Left sidebar */}
-        <aside className={styles.sidebar}>Lorem ipsum dolor,</aside>
+        <aside className={styles.sidebar}>
+          <form>
+            <Input label="Name" name="name" />
+            <InputTextarea />
+            <Button>Click me</Button>
+          </form>
+        </aside>
 
         {/* → Right content area */}
         <section className={styles.content}>

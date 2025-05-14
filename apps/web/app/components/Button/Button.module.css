@@ -1,0 +1,62 @@
+/* Button.module.css */
+
+/* Primary button base styling */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background-color: #2684FF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover state */
+.button:hover:not(:disabled) {
+  background-color: #1a6edc;
+}
+
+/* Focus state */
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.4);
+}
+
+/* Disabled state */
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Secondary variant */
+.secondary {
+  background-color: var(--background);
+  color: var(--foreground);
+  border: 1px solid #2684FF;
+}
+
+/* Secondary hover state */
+.secondary:hover:not(:disabled) {
+  background-color: rgba(38, 132, 255, 0.1);
+}
+
+/* Dark theme overrides */
+@media (prefers-color-scheme: dark) {
+  .button {
+    background-color: #2a7fff;
+  }
+  .button:hover:not(:disabled) {
+    background-color: #1a5ecc;
+  }
+  .secondary {
+    border-color: rgba(38, 132, 255, 0.5);
+  }
+  .secondary:hover:not(:disabled) {
+    background-color: rgba(38, 132, 255, 0.2);
+  }
+}
