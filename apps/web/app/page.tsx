@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import Input from "./components/Input/Input";
 import Button from "./components/Button/Button";
 import InputTextarea from "./components/InputTextarea/InputTextarea";
+import InputCheckbox from "./components/InputCheckbox/InputCheckbox";
 
 export default function Home() {
   return (
@@ -23,8 +24,22 @@ export default function Home() {
         <aside className={styles.sidebar}>
           <form>
             <Input label="Name" name="name" />
-            <InputTextarea />
-            <Button>Click me</Button>
+            <Input label="Date of Birth" name="dateOfBirth" />
+            <Input label="Hometown" name="hometown" />
+            <Input label="Occupation" name="occupation" />
+            <Button>Next</Button>
+          </form>
+
+          <form>
+            <InputTextarea
+              label={"Provide additional context"}
+              name={"feedback"}
+            />
+            <InputCheckbox
+              label={"Progress to next step"}
+              name={"isSatisfied"}
+            />
+            <Button>Next</Button>
           </form>
         </aside>
 
