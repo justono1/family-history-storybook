@@ -14,7 +14,7 @@
   width: 1rem;
   height: 1rem;
   margin-right: 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid #626262;
   border-radius: 3px;
   background-color: var(--background);
   accent-color: #2684ff;
