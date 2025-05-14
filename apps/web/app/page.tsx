@@ -28,7 +28,7 @@ export default function Home() {
   } = useForm<InitialData>();
   const onSubmitStep1: SubmitHandler<InitialData> = async (data) => {
     try {
-      // const res = await fetch("/api/step1", {
+      // const res = await fetch("/api/submit", {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(data),
