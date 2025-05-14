@@ -17,9 +17,11 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   background-color: var(--background);
-  accent-color: #2684FF;
+  accent-color: #2684ff;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 /* Focus state for checkbox */
 .checkbox:focus {
@@ -42,10 +44,4 @@
   margin-top: 0.25rem;
   font-size: 0.875rem;
   color: #d32f2f;
-}
-/* Dark theme overrides */
-@media (prefers-color-scheme: dark) {
-  .checkbox {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
 }
