@@ -48,7 +48,9 @@
   max-height: 0;
   opacity: 0;
   pointer-events: none;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
 }
 /* Make current step visible */
 .visibleStep {
@@ -69,4 +71,26 @@
 
 .divider {
   margin: 40px 0;
+}
+
+/* Spinner animation for generating preview */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  color: #666;
+  padding: 1rem;
+}
+.spinnerIcon {
+  animation: spin 1s linear infinite;
 }

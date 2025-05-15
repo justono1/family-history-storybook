@@ -1,5 +1,5 @@
 "use client";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaSpinner } from "react-icons/fa";
 import { useState } from "react";
 import styles from "./page.module.css";
 import InitialForm, {
@@ -153,19 +153,27 @@ export default function Home() {
       <main className={styles.main}>
         {/* ← Left sidebar */}
         <aside className={styles.sidebar}>
-          <div className={`${styles.stepContainer} ${step === 0 ? styles.visibleStep : ''}`}>
+          <div
+            className={`${styles.stepContainer} ${step === 0 ? styles.visibleStep : ""}`}
+          >
             <InitialForm onSubmit={onSubmitInitialStep} />
           </div>
-          <div className={`${styles.stepContainer} ${step === 1 ? styles.visibleStep : ''}`}>
+          <div
+            className={`${styles.stepContainer} ${step === 1 ? styles.visibleStep : ""}`}
+          >
             <HistoryFeedbackForm
               runId={runId}
               onSubmit={onHistoryFeedbackSubmit}
             />
           </div>
-          <div className={`${styles.stepContainer} ${step === 2 ? styles.visibleStep : ''}`}>
+          <div
+            className={`${styles.stepContainer} ${step === 2 ? styles.visibleStep : ""}`}
+          >
             <StoryFeedbackForm runId={runId} onSubmit={onStoryFeedbackSubmit} />
           </div>
-          <div className={`${styles.stepContainer} ${step === 3 ? styles.visibleStep : ''}`}>
+          <div
+            className={`${styles.stepContainer} ${step === 3 ? styles.visibleStep : ""}`}
+          >
             <p>All Done</p>
           </div>
         </aside>
@@ -187,7 +195,10 @@ export default function Home() {
             </>
           )}
           {(isGeneratingHistory || isGeneratingStory) && (
-            <p>Generating preview...</p>
+            <div className={styles.spinner}>
+              <FaSpinner className={styles.spinnerIcon} />
+              <span>Generating preview...</span>
+            </div>
           )}
         </section>
       </main>
