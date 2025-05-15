@@ -86,12 +86,6 @@ export const familyStorytellerAgent = new Agent({
     <h3>Chapter 2 Title</h3>
     <p>…narrative…</p>
     …
-    <!-- optional on request -->
-    <h2>Endnotes</h2>
-    <ol>
-      <li><sup>*</sup> Lightly fictionalized description of the county fair based on regional newspapers, 1912.</li>
-    </ol>
-
 
     Remember:
 
