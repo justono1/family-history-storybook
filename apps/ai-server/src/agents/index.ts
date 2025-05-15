@@ -101,5 +101,5 @@ export const familyStorytellerAgent = new Agent({
 
     Output only valid HTML body content as specified above.
   `,
-  model: openai("gpt-4.1-nano"),
+  model: openai("gpt-4.1-mini"),
 });
