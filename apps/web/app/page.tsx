@@ -11,6 +11,7 @@ import HistoryFeedbackForm, {
 import StoryFeedbackForm, {
   StoryFeedbackFormInputs,
 } from "./components/Forms/StoryFeedbackForm/StoryFeedbackForm";
+import Button from "./components/Button/Button";
 
 // Form types handled in child components
 
@@ -179,7 +180,9 @@ export default function Home() {
           <div
             className={`${styles.stepContainer} ${step === 3 ? styles.visibleStep : ""}`}
           >
-            <p>All Done</p>
+            <h4>All Done!</h4>
+            <p>You completed story is here ready for you to download.</p>
+            <Button>Download Story PDF</Button>
           </div>
         </aside>
 

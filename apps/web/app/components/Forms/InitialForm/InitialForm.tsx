@@ -23,6 +23,10 @@ export default function InitialForm({ onSubmit }: InitialFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <p>
+        Fill out the form below and click get start to start uncovering the
+        history of your loved one.
+      </p>
       <Input
         label="Name"
         {...register("name", { required: "Name is required" })}

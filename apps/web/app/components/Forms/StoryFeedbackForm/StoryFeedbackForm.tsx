@@ -48,6 +48,12 @@ export default function StoryFeedbackForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <h4>Story Feedback</h4>
+      <p>
+        We have generated an initial story based on the information your
+        provided. If you have any feedback provide it below and we will provide
+        an update.
+      </p>
       <Input
         label="Run Id"
         type="hidden"

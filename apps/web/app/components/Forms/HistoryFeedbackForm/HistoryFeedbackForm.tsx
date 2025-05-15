@@ -48,6 +48,11 @@ export default function HistoryFeedbackForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <h4>History Feedback</h4>
+      <p>
+        Review the text on the right. We have more questions and ideas that you
+        can provide more context on below.
+      </p>
       <Input
         label="Run Id"
         type="hidden"
