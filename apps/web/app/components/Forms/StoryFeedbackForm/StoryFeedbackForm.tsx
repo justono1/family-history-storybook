@@ -11,16 +11,19 @@ export type StoryFeedbackFormInputs = {
   stepId: string;
   feedback: string;
   isSatisfied: boolean;
+  previousResponse: string;
 };
 
 interface StoryFeedbackFormProps {
   runId?: string;
+  previousResponse?: string;
   onSubmit: SubmitHandler<StoryFeedbackFormInputs>;
 }
 
 export default function StoryFeedbackForm({
   runId,
   onSubmit,
+  previousResponse,
 }: StoryFeedbackFormProps) {
   const {
     register,
@@ -37,8 +40,11 @@ export default function StoryFeedbackForm({
     if (runId) {
       setValue("runId", runId);
     }
+    if (previousResponse) {
+      setValue("previousResponse", previousResponse);
+    }
     setValue("stepId", "provide-story-feedback");
-  }, [runId, setValue]);
+  }, [runId, previousResponse, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -52,6 +58,12 @@ export default function StoryFeedbackForm({
         label="Step Id"
         type="hidden"
         {...register("stepId", { required: "stepId is required" })}
+        error={errors.stepId?.message}
+      />
+      <Input
+        label="Previous Response"
+        type="hidden"
+        {...register("previousResponse", {})}
         error={errors.stepId?.message}
       />
       <InputTextarea

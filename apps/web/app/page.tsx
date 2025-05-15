@@ -164,12 +164,17 @@ export default function Home() {
             <HistoryFeedbackForm
               runId={runId}
               onSubmit={onHistoryFeedbackSubmit}
+              previousResponse={historyPreview}
             />
           </div>
           <div
             className={`${styles.stepContainer} ${step === 2 ? styles.visibleStep : ""}`}
           >
-            <StoryFeedbackForm runId={runId} onSubmit={onStoryFeedbackSubmit} />
+            <StoryFeedbackForm
+              runId={runId}
+              onSubmit={onStoryFeedbackSubmit}
+              previousResponse={storyPreview}
+            />
           </div>
           <div
             className={`${styles.stepContainer} ${step === 3 ? styles.visibleStep : ""}`}

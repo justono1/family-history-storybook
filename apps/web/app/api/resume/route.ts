@@ -3,7 +3,8 @@ import { getFamilyStoryWorkflow } from "../mastraClient";
 
 export async function POST(request: Request) {
   try {
-    const { runId, stepId, feedback, isSatisfied } = await request.json();
+    const { runId, stepId, feedback, isSatisfied, previousResponse } =
+      await request.json();
     if (!runId || !stepId) {
       return NextResponse.json(
         { error: "Missing runId or step for resume." },
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
     const result = await workflow.resumeAsync({
       runId,
       step: stepId,
-      resumeData: { feedback, isSatisfied },
+      resumeData: { feedback, isSatisfied, previousResponse },
     });
     return NextResponse.json({ success: true, data: result });
   } catch (error: any) {

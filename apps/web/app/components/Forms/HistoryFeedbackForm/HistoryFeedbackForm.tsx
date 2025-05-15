@@ -11,16 +11,19 @@ export type HistoryFeedbackFormInputs = {
   stepId: string;
   feedback: string;
   isSatisfied: boolean;
+  previousResponse: string;
 };
 
 interface HistoryFeedbackFormProps {
   runId?: string;
+  previousResponse?: string;
   onSubmit: SubmitHandler<HistoryFeedbackFormInputs>;
 }
 
 export default function HistoryFeedbackForm({
   runId,
   onSubmit,
+  previousResponse,
 }: HistoryFeedbackFormProps) {
   const {
     register,
@@ -37,8 +40,11 @@ export default function HistoryFeedbackForm({
     if (runId) {
       setValue("runId", runId);
     }
+    if (previousResponse) {
+      setValue("previousResponse", previousResponse);
+    }
     setValue("stepId", "provide-more-context");
-  }, [runId, setValue]);
+  }, [runId, previousResponse, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -52,6 +58,12 @@ export default function HistoryFeedbackForm({
         label="Step Id"
         type="hidden"
         {...register("stepId", { required: "stepId is required" })}
+        error={errors.stepId?.message}
+      />
+      <Input
+        label="Previous Response"
+        type="hidden"
+        {...register("previousResponse", {})}
         error={errors.stepId?.message}
       />
       <InputTextarea

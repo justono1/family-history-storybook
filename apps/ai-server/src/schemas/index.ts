@@ -11,7 +11,7 @@ export const familyMemberStorySchema = z.object({
 export const familyMemberBaseSchema = z.object({
   name: z.string(),
   dateOfBirth: z.string(),
-  homeTown: z.string(),
+  hometown: z.string(),
   occupation: z.string(),
 });
 
@@ -19,6 +19,7 @@ export const generalFeedbackSchema = z
   .object({
     feedback: z.string().optional(),
     isSatisfied: z.boolean().optional().default(false),
+    previousResponse: z.string(),
   })
   .refine((data) => data.feedback !== undefined || data.isSatisfied === true, {
     message: "When no feedback is given, isSatisfied must be true",

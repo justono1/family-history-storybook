@@ -26,12 +26,12 @@ const summarizeAndAskAdditionalQuestions = createStep({
         throw new Error("Mastra is not initialized");
       }
 
-      const { name, dateOfBirth, homeTown, occupation } = inputData;
+      const { name, dateOfBirth, hometown, occupation } = inputData;
 
       const result = await mastra.getAgent(FAMILY_HISTORIAN_AGENT).generate([
         {
           role: "user",
-          content: `Name: ${name}, Date of Birth: ${dateOfBirth}, Hometown: ${homeTown}, Occupation: ${occupation}`,
+          content: `Name: ${name}, Date of Birth: ${dateOfBirth}, Hometown: ${hometown}, Occupation: ${occupation}`,
         },
       ]);
 
@@ -63,24 +63,33 @@ const provideMoreContext = createStep({
   suspendSchema: familyMemberHistorySchema,
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     try {
-      // check for is feedback and also isSatisfied. Feedback might not be given but isSatisfied could be true
-      if (!resumeData?.feedback && !resumeData?.isSatisfied) {
-        await suspend({ history: inputData?.history });
+      // determine feedback and satisfaction from resume data
+      const feedback = resumeData?.feedback;
+      const isSatisfied = resumeData?.isSatisfied;
+      const previousResponse = resumeData?.previousResponse;
+
+      // if no feedback provided
+      if (!feedback) {
+        // if not satisfied, suspend and return current history
+        if (!isSatisfied) {
+          await suspend({
+            history: previousResponse ? previousResponse : inputData.history,
+          });
+        }
         return {
-          history: inputData.history,
+          history: previousResponse ? previousResponse : inputData.history,
         };
       }
 
-      const { feedback, isSatisfied } = resumeData;
-
+      // feedback provided, generate updated history
       const result = await mastra.getAgent(FAMILY_HISTORIAN_AGENT).generate([
         {
           role: "assistant",
-          content: inputData.history,
+          content: previousResponse ? previousResponse : inputData.history,
         },
         {
           role: "user",
-          content: feedback ? feedback : "No further feedback",
+          content: feedback,
         },
       ]);
 
@@ -158,24 +167,30 @@ const provideStoryFeedback = createStep({
   suspendSchema: familyMemberStorySchema,
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     try {
-      // check for is feedback and also isSatisfied. Feedback might not be given but isSatisfied could be true
-      if (!resumeData?.feedback && !resumeData?.isSatisfied) {
-        await suspend({ story: inputData?.story });
-        return {
-          story: inputData.story,
-        };
+      // extract feedback and satisfaction
+      const feedback = resumeData?.feedback;
+      const isSatisfied = resumeData?.isSatisfied;
+      const previousResponse = resumeData?.previousResponse;
+
+      // if no feedback provided, possibly suspend then return current story
+      if (!feedback) {
+        if (!isSatisfied) {
+          await suspend({
+            story: previousResponse ? previousResponse : inputData.story,
+          });
+        }
+        return { story: previousResponse ? previousResponse : inputData.story };
       }
 
-      const { feedback, isSatisfied } = resumeData;
-
+      // feedback provided, generate updated story
       const result = await mastra.getAgent(FAMILY_STORYTELLER_AGENT).generate([
         {
           role: "assistant",
-          content: inputData.story,
+          content: previousResponse ? previousResponse : inputData.story,
         },
         {
           role: "user",
-          content: feedback ? feedback : "No further feedback",
+          content: feedback,
         },
       ]);
 
