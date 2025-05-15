@@ -30,6 +30,12 @@ export const familyHistorianAgent = new Agent({
       • …  
       ---
 
+      Response Formatting:
+      - return valid HTML body content.
+      - no need to return a full html doc
+      - only response with basic web typography elements like <h2> - <h6>, <p>, <ul>, <ol>, <li>, <blockquote>
+      - NEVER return an <h1>
+
       Now, here's my initial information about my family member:
   `,
   model: openai("gpt-4.1-nano"),
@@ -64,6 +70,13 @@ export const familyStorytellerAgent = new Agent({
     • Option 1: [e.g. “Adopt a more formal tone and expand on wartime experiences.”]
     • Option 2: [e.g. “Focus more on family traditions and childhood memories.”]
     • Option 3: [e.g. “Include footnotes/endnotes for source citations.”]
+
+    Response Formatting:
+    - return valid HTML body content.
+    - no need to return a full html doc
+    - only response with basic web typography elements like <h2> - <h6>, <p>, <ul>, <ol>, <li>, <blockquote>
+    - NEVER return an <h1>
+
     Now, here is the output from my Family History Investigator GPT session plus my notes about tone and focus:
   `,
   model: openai("gpt-4.1-nano"),
