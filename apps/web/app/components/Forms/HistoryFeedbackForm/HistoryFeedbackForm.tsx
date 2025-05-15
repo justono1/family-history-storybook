@@ -1,0 +1,67 @@
+"use client";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useEffect } from "react";
+import Input from "../../Input/Input";
+import InputTextarea from "../../InputTextarea/InputTextarea";
+import InputCheckbox from "../../InputCheckbox/InputCheckbox";
+import Button from "../../Button/Button";
+
+export type HistoryFeedbackFormInputs = {
+  runId: string;
+  stepId: string;
+  feedback: string;
+  isSatisfied: boolean;
+};
+
+interface HistoryFeedbackFormProps {
+  runId?: string;
+  onSubmit: SubmitHandler<HistoryFeedbackFormInputs>;
+}
+
+export default function HistoryFeedbackForm({
+  runId,
+  onSubmit,
+}: HistoryFeedbackFormProps) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<HistoryFeedbackFormInputs>();
+
+  useEffect(() => {
+    if (runId) {
+      setValue("runId", runId);
+    }
+    setValue("stepId", "provide-more-context");
+  }, [runId, setValue]);
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Input
+        label="Run Id"
+        type="hidden"
+        {...register("runId", { required: "runId is required" })}
+        error={errors.runId?.message}
+      />
+      <Input
+        label="Step Id"
+        type="hidden"
+        {...register("stepId", { required: "stepId is required" })}
+        error={errors.stepId?.message}
+      />
+      <InputTextarea
+        label="Provide additional context"
+        {...register("feedback")}
+        error={errors.feedback?.message}
+      />
+      <InputCheckbox
+        label="I have no more context to provide"
+        {...register("isSatisfied")}
+      />
+      <Button type="submit" loading={isSubmitting}>
+        Next
+      </Button>
+    </form>
+  );
+}

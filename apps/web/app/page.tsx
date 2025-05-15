@@ -1,26 +1,18 @@
 "use client";
 import { FaGithub } from "react-icons/fa";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useState } from "react";
 import styles from "./page.module.css";
-import Input from "./components/Input/Input";
-import Button from "./components/Button/Button";
-import InputTextarea from "./components/InputTextarea/InputTextarea";
-import InputCheckbox from "./components/InputCheckbox/InputCheckbox";
-import { useEffect, useState } from "react";
+import InitialForm, {
+  InitialFormInputs,
+} from "./components/Forms/InitialForm/InitialForm";
+import HistoryFeedbackForm, {
+  HistoryFeedbackFormInputs,
+} from "./components/Forms/HistoryFeedbackForm/HistoryFeedbackForm";
+import StoryFeedbackForm, {
+  StoryFeedbackFormInputs,
+} from "./components/Forms/StoryFeedbackForm/StoryFeedbackForm";
 
-// Types for form steps
-type InitialData = {
-  name: string;
-  dateOfBirth: string;
-  hometown: string;
-  occupation: string;
-};
-type FeedbackData = {
-  runId: string;
-  stepId: string;
-  feedback: string;
-  isSatisfied: boolean;
-};
+// Form types handled in child components
 
 export default function Home() {
   const [runId, setRunId] = useState<string>();
@@ -30,16 +22,8 @@ export default function Home() {
   const [storyPreview, setStoryPreview] = useState<string>();
   const [isGeneratingStory, setIsGeneratingStory] = useState<boolean>(false);
 
-  // Input Form
-  const {
-    register: registerInitialStep,
-    handleSubmit: handleInitialStepSubmit,
-    formState: {
-      errors: initialInputErrors,
-      isSubmitting: isInitialInputSubmitting,
-    },
-  } = useForm<InitialData>();
-  const onSubmitInitialStep: SubmitHandler<InitialData> = async (data) => {
+  // Handler for initial data submission
+  const onSubmitInitialStep = async (data: InitialFormInputs) => {
     try {
       setIsGeneratingHistory(true);
 
@@ -64,18 +48,50 @@ export default function Home() {
     }
   };
 
-  // History Feedback Form
-  const {
-    register: registerHistoryFeedbackStep,
-    handleSubmit: handleHistoryFeedbackSubmit,
-    setValue: setHistoryFeedbackValue,
-    formState: {
-      errors: historyFeedbackErrors,
-      isSubmitting: isHistoryFeedbackSubmitting,
-    },
-  } = useForm<FeedbackData>();
+  // Handler for history feedback submission
+  const onHistoryFeedbackSubmit = async (data: HistoryFeedbackFormInputs) => {
+    try {
+      setIsGeneratingHistory(true);
 
-  const onHistoryFeedbackSubmit: SubmitHandler<FeedbackData> = async (data) => {
+      const res = await fetch("/api/resume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error(`Step 2 error ${res.status}`);
+
+      const result: any = await res.json();
+
+      // Initial preview set
+      if (result?.data?.steps["provide-more-context"]?.payload?.history) {
+        setHistoryPreview(
+          result.data.steps["provide-more-context"].payload.history
+        );
+      }
+
+      if (result?.data?.steps["provide-more-context"]?.output?.history) {
+        setHistoryPreview(
+          result.data.steps["provide-more-context"].output.history
+        );
+      }
+
+      // Initial Story set
+      if (result?.data?.steps["provide-story-feedback"]?.payload?.story) {
+        setStoryPreview(
+          result.data.steps["provide-story-feedback"].payload.story
+        );
+      }
+
+      setIsGeneratingHistory(false);
+    } catch (err) {
+      setIsGeneratingHistory(false);
+      console.error(err);
+    }
+  };
+
+  // Handler for story feedback submission
+  const onStoryFeedbackSubmit = async (data: StoryFeedbackFormInputs) => {
     try {
       setIsGeneratingStory(true);
 
@@ -89,9 +105,18 @@ export default function Home() {
 
       const result: any = await res.json();
 
-      setStoryPreview(
-        result.data.steps["provide-story-feedback"].payload.story
-      );
+      // Initial preview set
+      if (result?.data?.steps["provide-story-feedback"]?.payload?.story)
+        setStoryPreview(
+          result.data.steps["provide-story-feedback"].payload.story
+        );
+
+      // If Step is completed set the output
+      if (result?.data?.steps["provide-story-feedback"]?.output?.story) {
+        setHistoryPreview(
+          result?.data?.steps["provide-story-feedback"]?.output?.story
+        );
+      }
 
       setIsGeneratingStory(false);
     } catch (err) {
@@ -100,48 +125,7 @@ export default function Home() {
     }
   };
 
-  // Story  Feedback Form
-  const {
-    register: registerStoryFeedbackStep,
-    handleSubmit: handleStoryFeedbackSubmit,
-    setValue: setStoryFeedbackValue,
-    formState: {
-      errors: storyFeedbackErrors,
-      isSubmitting: isSubmittingStoryFeedback,
-    },
-  } = useForm<FeedbackData>();
-
-  const onStoryFeedbackSubmit: SubmitHandler<FeedbackData> = async (data) => {
-    try {
-      setIsGeneratingStory(true);
-
-      const res = await fetch("/api/resume", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) throw new Error(`Step 2 error ${res.status}`);
-
-      const result: any = await res.json();
-
-      setStoryPreview(
-        result.data.steps["provide-story-feedback"].payload.story
-      );
-
-      setIsGeneratingStory(false);
-    } catch (err) {
-      setIsGeneratingStory(false);
-      console.error(err);
-    }
-  };
-
-  // Sets run id on hidden step values when present or changes
-  useEffect(() => {
-    if (!runId) return;
-    setHistoryFeedbackValue("runId", runId);
-    setStoryFeedbackValue("runId", runId);
-  }, [runId]);
+  // Child forms set their own hidden values via useEffect internally
 
   return (
     <div className={styles.page}>
@@ -158,104 +142,12 @@ export default function Home() {
       <main className={styles.main}>
         {/* ← Left sidebar */}
         <aside className={styles.sidebar}>
-          <form onSubmit={handleInitialStepSubmit(onSubmitInitialStep)}>
-            {/* initial input form */}
-            <Input
-              label="Name"
-              {...registerInitialStep("name", { required: "Name is required" })}
-              error={initialInputErrors.name?.message}
-            />
-            <Input
-              label="Date of Birth"
-              {...registerInitialStep("dateOfBirth", {
-                required: "Date of birth is required",
-              })}
-              error={initialInputErrors.dateOfBirth?.message}
-            />
-            <Input
-              label="Hometown"
-              {...registerInitialStep("hometown", {
-                required: "Hometown is required",
-              })}
-              error={initialInputErrors.hometown?.message}
-            />
-            <Input
-              label="Occupation"
-              {...registerInitialStep("occupation", {
-                required: "Occupation is required",
-              })}
-              error={initialInputErrors.occupation?.message}
-            />
-            <Button type="submit" loading={isInitialInputSubmitting}>
-              Start
-            </Button>
-          </form>
-
-          {/* history feedback form */}
-          <form onSubmit={handleHistoryFeedbackSubmit(onHistoryFeedbackSubmit)}>
-            <Input
-              label="Run Id"
-              type="hidden"
-              {...registerHistoryFeedbackStep("runId", {
-                required: "runId is required",
-              })}
-              error={historyFeedbackErrors.runId?.message}
-            />
-            <Input
-              label="Step Id"
-              type="hidden"
-              value={"provide-more-context"}
-              {...registerHistoryFeedbackStep("stepId", {
-                required: "stepId is required",
-              })}
-              error={historyFeedbackErrors.stepId?.message}
-            />
-            <InputTextarea
-              label="Provide additional context"
-              {...registerHistoryFeedbackStep("feedback", {})}
-              error={historyFeedbackErrors.feedback?.message}
-            />
-            <InputCheckbox
-              label="I have no more context to provide"
-              {...registerHistoryFeedbackStep("isSatisfied")}
-            />
-            <Button type="submit" loading={isHistoryFeedbackSubmitting}>
-              Next
-            </Button>
-          </form>
-
-          {/* story feedback form */}
-          <form onSubmit={handleStoryFeedbackSubmit(onStoryFeedbackSubmit)}>
-            <Input
-              label="Run Id"
-              type="hidden"
-              {...registerStoryFeedbackStep("runId", {
-                required: "runId is required",
-              })}
-              error={storyFeedbackErrors.runId?.message}
-            />
-            <Input
-              label="Step Id"
-              type="hidden"
-              value={"provide-story-feedback"}
-              {...registerStoryFeedbackStep("stepId", {
-                required: "stepId is required",
-              })}
-              error={storyFeedbackErrors.stepId?.message}
-            />
-            <InputTextarea
-              label="Provide feedback on story"
-              {...registerStoryFeedbackStep("feedback", {})}
-              error={storyFeedbackErrors.feedback?.message}
-            />
-            <InputCheckbox
-              label="I am happy with the story"
-              {...registerStoryFeedbackStep("isSatisfied")}
-            />
-            <Button type="submit" loading={isSubmittingStoryFeedback}>
-              Complete
-            </Button>
-          </form>
+          <InitialForm onSubmit={onSubmitInitialStep} />
+          <HistoryFeedbackForm
+            runId={runId}
+            onSubmit={onHistoryFeedbackSubmit}
+          />
+          <StoryFeedbackForm runId={runId} onSubmit={onStoryFeedbackSubmit} />
         </aside>
 
         {/* → Right content area */}
