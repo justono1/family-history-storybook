@@ -189,18 +189,20 @@ export default function Home() {
         {/* → Right content area */}
         <section className={styles.content}>
           {(historyPreview || storyPreview) && (
-            <>
+            <div className={styles.innerContainer}>
               {/* Render HTML from historyPreview */}
+              {/* Hackathon deserves some danger */}
               <div dangerouslySetInnerHTML={{ __html: historyPreview! }} />
 
               {storyPreview && (
                 <>
                   <hr className={styles.divider} />
                   {/* Render HTML from storyPreview */}
+                  {/* Hackathon deserves some danger */}
                   <div dangerouslySetInnerHTML={{ __html: storyPreview! }} />
                 </>
               )}
-            </>
+            </div>
           )}
           {(isGeneratingHistory || isGeneratingStory) && (
             <div className={styles.spinner}>

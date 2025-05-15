@@ -71,7 +71,7 @@ export const familyStorytellerAgent = new Agent({
 
     Use paragraphs (<p>), ordered/unordered lists, blockquotes, and headings <h2>-<h6> only—never return <h1>.
 
-    Template
+    Template (be sure to ALWAYS prefix a chapter title with Chapter 1, Chapter 2, Chapter 3, and so on ):
 
     <h2>Table of Contents</h2>
     <ol>

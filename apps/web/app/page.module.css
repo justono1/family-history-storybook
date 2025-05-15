@@ -69,6 +69,11 @@
   display: none;
 }
 
+.innerContainer {
+  margin: 0 auto;
+  max-width: 840px;
+}
+
 .divider {
   margin: 40px 0;
 }
