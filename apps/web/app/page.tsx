@@ -153,17 +153,21 @@ export default function Home() {
       <main className={styles.main}>
         {/* ← Left sidebar */}
         <aside className={styles.sidebar}>
-          {step === 0 && <InitialForm onSubmit={onSubmitInitialStep} />}
-          {step === 1 && (
+          <div className={`${styles.stepContainer} ${step === 0 ? styles.visibleStep : ''}`}>
+            <InitialForm onSubmit={onSubmitInitialStep} />
+          </div>
+          <div className={`${styles.stepContainer} ${step === 1 ? styles.visibleStep : ''}`}>
             <HistoryFeedbackForm
               runId={runId}
               onSubmit={onHistoryFeedbackSubmit}
             />
-          )}
-          {step === 2 && (
+          </div>
+          <div className={`${styles.stepContainer} ${step === 2 ? styles.visibleStep : ''}`}>
             <StoryFeedbackForm runId={runId} onSubmit={onStoryFeedbackSubmit} />
-          )}
-          {step === 3 && <p>All Done</p>}
+          </div>
+          <div className={`${styles.stepContainer} ${step === 3 ? styles.visibleStep : ''}`}>
+            <p>All Done</p>
+          </div>
         </aside>
 
         {/* → Right content area */}

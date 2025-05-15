@@ -42,6 +42,20 @@
 .sidebar::-webkit-scrollbar {
   display: none;
 }
+/* Step container styling for fade transitions */
+.stepContainer {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+/* Make current step visible */
+.visibleStep {
+  max-height: 1000px;
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .content {
   flex: 1;
