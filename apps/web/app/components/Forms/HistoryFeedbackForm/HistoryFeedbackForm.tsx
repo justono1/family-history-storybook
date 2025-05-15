@@ -26,8 +26,12 @@ export default function HistoryFeedbackForm({
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<HistoryFeedbackFormInputs>();
+
+  // subscribe to changes on isSatisfied
+  const isSatisfied = watch("isSatisfied");
 
   useEffect(() => {
     if (runId) {
@@ -60,7 +64,7 @@ export default function HistoryFeedbackForm({
         {...register("isSatisfied")}
       />
       <Button type="submit" loading={isSubmitting}>
-        Next
+        {isSatisfied ? "Next" : "Provide Feedback"}
       </Button>
     </form>
   );

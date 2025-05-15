@@ -26,8 +26,12 @@ export default function StoryFeedbackForm({
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<StoryFeedbackFormInputs>();
+
+  // subscribe to changes on isSatisfied
+  const isSatisfied = watch("isSatisfied");
 
   useEffect(() => {
     if (runId) {
@@ -60,7 +64,7 @@ export default function StoryFeedbackForm({
         {...register("isSatisfied")}
       />
       <Button type="submit" loading={isSubmitting}>
-        Complete
+        {isSatisfied ? "Complete" : "Provide Feedback"}
       </Button>
     </form>
   );
