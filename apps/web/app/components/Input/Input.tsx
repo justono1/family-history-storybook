@@ -23,6 +23,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     .filter(Boolean)
     .join(" ");
 
+  if (rest.type === "hidden") {
+    // For hidden input, render only the input element
+    return <input ref={ref} {...rest} />;
+  }
+
   return (
     <div className={styles.container}>
       {label && (

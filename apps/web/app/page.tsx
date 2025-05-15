@@ -6,6 +6,7 @@ import Input from "./components/Input/Input";
 import Button from "./components/Button/Button";
 import InputTextarea from "./components/InputTextarea/InputTextarea";
 import InputCheckbox from "./components/InputCheckbox/InputCheckbox";
+import { useEffect, useState } from "react";
 
 // Types for form steps
 type InitialData = {
@@ -15,11 +16,27 @@ type InitialData = {
   occupation: string;
 };
 type FeedbackData = {
+  runId: string;
+  stepId: string;
   feedback: string;
   isSatisfied: boolean;
 };
 
+const workFlowStepIds: string[] = [
+  "provide-more-context",
+  "generate-story-and-ask-for-feedback",
+  "provide-story-feedback",
+  "create-family-story",
+  "provide-story-feedback",
+];
+
 export default function Home() {
+  const [runId, setRunId] = useState<string>();
+  const [isGeneratingHistory, setIsGeneratingHistory] = useState<boolean>(false);
+  const [historyPreview, setHistoryPreview] = useState<string>();
+  const [storyPreview, setStoryPreview] = useState<string>();
+  const [isGeneratingStory, setIsGeneratingStory] = useState<boolean>(false);
+
   // Step 1 form
   const {
     register: register1,
@@ -28,15 +45,21 @@ export default function Home() {
   } = useForm<InitialData>();
   const onSubmitStep1: SubmitHandler<InitialData> = async (data) => {
     try {
-      // const res = await fetch("/api/submit", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
-      // if (!res.ok) throw new Error(`Step 1 error ${res.status}`);
-      // console.log("Step1 success:", await res.json());
-      console.log(data);
+      setIsGeneratingHistory(true);
+      const res = await fetch("/api/submit", {  
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`Step 1 error ${res.status}`);
+      console.log("Step1 success:", await res.json());
+      const result = await res.json();
+      setRunId(result.runId);
+      setHistoryPreview(result.history);
+      setIsGeneratingHistory(false);
+      console.log(result);
     } catch (err) {
+      setIsGeneratingHistory(false);
       console.error(err);
     }
   };
@@ -45,19 +68,32 @@ export default function Home() {
   const {
     register: register2,
     handleSubmit: handleSubmit2,
+    setValue: setValue2,
     formState: { errors: errors2, isSubmitting: isSubmitting2 },
   } = useForm<FeedbackData>();
+
+  useEffect(() => {
+    if (!runId) return;
+    setValue2("runId", runId);
+    setValue2("stepId", workFlowStepIds[0]!);
+  }, [runId]);
+
   const onSubmitStep2: SubmitHandler<FeedbackData> = async (data) => {
     try {
-      // const res = await fetch("/api/step2", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
-      // if (!res.ok) throw new Error(`Step 2 error ${res.status}`);
-      // console.log("Step2 success:", await res.json());
-      console.log(data);
+      setIsGeneratingStory(true);
+      const res = await fetch("/api/submit/resume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`Step 2 error ${res.status}`);
+      console.log("Step2 success:", await res.json());
+      const result = await res.json();
+      setStoryPreview(result.story);
+      setIsGeneratingStory(false);
+      console.log(result);
     } catch (err) {
+      setIsGeneratingStory(false);
       console.error(err);
     }
   };
@@ -108,6 +144,18 @@ export default function Home() {
           </form>
 
           <form onSubmit={handleSubmit2(onSubmitStep2)}>
+            <Input
+              label="Run Id"
+              type="hidden"
+              {...register2("runId", { required: "runId is required" })}
+              error={errors1.name?.message}
+            />
+            <Input
+              label="Step Id"
+              type="hidden"
+              {...register2("stepId", { required: "stepId is required" })}
+              error={errors1.name?.message}
+            />
             <InputTextarea
               label="Provide additional context"
               {...register2("feedback", {
@@ -118,10 +166,7 @@ export default function Home() {
             />
             <InputCheckbox
               label="Progress to next step"
-              {...register2("isSatisfied", { required: "Agreement required" })}
-              error={
-                errors2.isSatisfied ? "You must agree to continue" : undefined
-              }
+              {...register2("isSatisfied")}
             />
             <Button type="submit" loading={isSubmitting2}>
               Next
@@ -130,21 +175,16 @@ export default function Home() {
         </aside>
 
         {/* → Right content area */}
-        <section className={styles.content}>
-          <h1>Welcome!</h1>
-          <p>This is your main content area.</p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vero nemo
-          laudantium beatae officiis sed corporis, placeat sequi aliquid quod
-          repellat ratione commodi ab repellendus, iste ex accusamus! Animi,
-          enim quasi. Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-          Vero nemo laudantium beatae officiis sed corporis, placeat sequi
-          aliquid quod repellat ratione commodi ab repellendus, iste ex
-          accusamus! Animi, enim quasi. Lorem ipsum dolor, sit amet consectetur
-          adipisicing elit. Vero nemo laudantium beatae officiis sed corporis,
-          placeat sequi aliquid quod repellat ratione commodi ab repellendus,
-          iste ex accusamus! Animi, enim quasi. Lorem ipsum dolor, sit amet
-          consectetur adipisicing elit.
-        </section>
+        {historyPreview && (
+          <section className={styles.content}>{historyPreview}</section>
+        )}
+        {storyPreview && (
+          <>
+            <hr />
+            <section className={styles.content}>{storyPreview}</section>
+          </>
+        )}
+        {isGeneratingHistory || isGeneratingStory && <p>Generating preview...</p>}
       </main>
     </div>
   );

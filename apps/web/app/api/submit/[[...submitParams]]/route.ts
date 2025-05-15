@@ -8,14 +8,14 @@ export async function POST(request: Request, { params }: { params: { submitParam
 
     if (submitParams[0] === "resume") {
       // Resume logic
-      const { runId, step, resumeData } = await request.json();
-      if (!runId || !step || !resumeData) {
+      const { runId, step, feedback, isSatisfied } = await request.json();
+      if (!runId || !step) {
         return NextResponse.json(
           { error: "Missing runId, step, or resumeData for resume." },
           { status: 400 }
         );
       }
-      const result = await workflow.resumeAsync({ runId, step, resumeData });
+      const result = await workflow.resumeAsync({ runId, step, resumeData: { feedback, isSatisfied } });
       return NextResponse.json({ result });
     } else {
       // Start logic (default)
