@@ -189,12 +189,18 @@ export default function Home() {
         <section className={styles.content}>
           {(historyPreview || storyPreview) && (
             <>
-              <div>{historyPreview}</div>
+              {/* Render HTML from historyPreview */}
+              <div
+                dangerouslySetInnerHTML={{ __html: historyPreview! }}
+              />
 
               {storyPreview && (
                 <>
                   <hr className={styles.divider} />
-                  <div>{storyPreview}</div>
+                  {/* Render HTML from storyPreview */}
+                  <div
+                    dangerouslySetInnerHTML={{ __html: storyPreview! }}
+                  />
                 </>
               )}
             </>
