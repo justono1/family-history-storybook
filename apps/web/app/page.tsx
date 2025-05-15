@@ -7,6 +7,7 @@ import Button from "./components/Button/Button";
 import InputTextarea from "./components/InputTextarea/InputTextarea";
 import InputCheckbox from "./components/InputCheckbox/InputCheckbox";
 import { useEffect, useState } from "react";
+import { VNextWorkflowRunResult } from "@mastra/client-js";
 
 // Types for form steps
 type InitialData = {
@@ -32,7 +33,8 @@ const workFlowStepIds: string[] = [
 
 export default function Home() {
   const [runId, setRunId] = useState<string>();
-  const [isGeneratingHistory, setIsGeneratingHistory] = useState<boolean>(false);
+  const [isGeneratingHistory, setIsGeneratingHistory] =
+    useState<boolean>(false);
   const [historyPreview, setHistoryPreview] = useState<string>();
   const [storyPreview, setStoryPreview] = useState<string>();
   const [isGeneratingStory, setIsGeneratingStory] = useState<boolean>(false);
@@ -46,16 +48,22 @@ export default function Home() {
   const onSubmitStep1: SubmitHandler<InitialData> = async (data) => {
     try {
       setIsGeneratingHistory(true);
-      const res = await fetch("/api/submit", {  
+      const res = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error(`Step 1 error ${res.status}`);
-      console.log("Step1 success:", await res.json());
-      const result = await res.json();
+      const result: any = await res.json(); // Something might be wrong here so setting any
+      console.log("Step1 success:", result);
+      console.log(
+        "result.data.steps['provide-more-context'].payload.history:",
+        result.data.steps["provide-more-context"].payload.history
+      );
       setRunId(result.runId);
-      setHistoryPreview(result.history);
+      setHistoryPreview(
+        result.data.steps["provide-more-context"].payload.history
+      );
       setIsGeneratingHistory(false);
       console.log(result);
     } catch (err) {
@@ -80,16 +88,19 @@ export default function Home() {
 
   const onSubmitStep2: SubmitHandler<FeedbackData> = async (data) => {
     try {
+      console.log("data resume: ", data);
       setIsGeneratingStory(true);
-      const res = await fetch("/api/submit/resume", {
+      const res = await fetch("/api/resume", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error(`Step 2 error ${res.status}`);
-      console.log("Step2 success:", await res.json());
-      const result = await res.json();
-      setStoryPreview(result.story);
+      const result: any = await res.json();
+      console.log("Step2 success:", result);
+      setStoryPreview(
+        result.data.steps["provide-story-feedback"].payload.story
+      );
       setIsGeneratingStory(false);
       console.log(result);
     } catch (err) {
@@ -175,16 +186,23 @@ export default function Home() {
         </aside>
 
         {/* → Right content area */}
-        {historyPreview && (
-          <section className={styles.content}>{historyPreview}</section>
-        )}
-        {storyPreview && (
-          <>
-            <hr />
-            <section className={styles.content}>{storyPreview}</section>
-          </>
-        )}
-        {isGeneratingHistory || isGeneratingStory && <p>Generating preview...</p>}
+        <section className={styles.content}>
+          {(historyPreview || storyPreview) && (
+            <>
+              <div>{historyPreview}</div>
+
+              {storyPreview && (
+                <>
+                  <hr className={styles.divider} />
+                  <div>{storyPreview}</div>
+                </>
+              )}
+            </>
+          )}
+          {(isGeneratingHistory || isGeneratingStory) && (
+            <p>Generating preview...</p>
+          )}
+        </section>
       </main>
     </div>
   );

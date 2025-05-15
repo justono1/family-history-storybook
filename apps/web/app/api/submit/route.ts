@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       runId: run.runId,
       inputData: { name, dateOfBirth, hometown, occupation },
     });
-    return NextResponse.json({ result });
+    return NextResponse.json({ success: true, runId: run.runId, data: result });
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Unknown error" },

@@ -15,6 +15,17 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  
+### Configuration
+
+This project uses a Mastra AI server for workflow execution. By default, it expects the server to
+be running at `http://localhost:4111`. If your AI server is hosted elsewhere or on a different
+port, create a `.env.local` file in the project root with the following content:
+
+```env
+AI_SERVER_URL=http://your-server-host:port
+```
+Restart the development server after creating or updating this file.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
