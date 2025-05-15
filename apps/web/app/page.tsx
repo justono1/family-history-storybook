@@ -16,6 +16,8 @@ import StoryFeedbackForm, {
 
 export default function Home() {
   const [runId, setRunId] = useState<string>();
+  // 0=initial, 1=history feedback, 2=story feedback, 3=done
+  const [step, setStep] = useState<number>(0);
   const [isGeneratingHistory, setIsGeneratingHistory] =
     useState<boolean>(false);
   const [historyPreview, setHistoryPreview] = useState<string>();
@@ -40,7 +42,8 @@ export default function Home() {
       setHistoryPreview(
         result.data.steps["provide-more-context"].payload.history
       );
-
+      // move to history feedback step
+      setStep(1);
       setIsGeneratingHistory(false);
     } catch (err) {
       setIsGeneratingHistory(false);
@@ -82,6 +85,10 @@ export default function Home() {
           result.data.steps["provide-story-feedback"].payload.story
         );
       }
+      // if user accepted history, move to story feedback step
+      if (data.isSatisfied) {
+        setStep(2);
+      }
 
       setIsGeneratingHistory(false);
     } catch (err) {
@@ -113,9 +120,13 @@ export default function Home() {
 
       // If Step is completed set the output
       if (result?.data?.steps["provide-story-feedback"]?.output?.story) {
-        setHistoryPreview(
+        setStoryPreview(
           result?.data?.steps["provide-story-feedback"]?.output?.story
         );
+      }
+      // if user is satisfied with story, finish
+      if (data.isSatisfied) {
+        setStep(3);
       }
 
       setIsGeneratingStory(false);
@@ -142,12 +153,17 @@ export default function Home() {
       <main className={styles.main}>
         {/* ← Left sidebar */}
         <aside className={styles.sidebar}>
-          <InitialForm onSubmit={onSubmitInitialStep} />
-          <HistoryFeedbackForm
-            runId={runId}
-            onSubmit={onHistoryFeedbackSubmit}
-          />
-          <StoryFeedbackForm runId={runId} onSubmit={onStoryFeedbackSubmit} />
+          {step === 0 && <InitialForm onSubmit={onSubmitInitialStep} />}
+          {step === 1 && (
+            <HistoryFeedbackForm
+              runId={runId}
+              onSubmit={onHistoryFeedbackSubmit}
+            />
+          )}
+          {step === 2 && (
+            <StoryFeedbackForm runId={runId} onSubmit={onStoryFeedbackSubmit} />
+          )}
+          {step === 3 && <p>All Done</p>}
         </aside>
 
         {/* → Right content area */}
