@@ -156,40 +156,47 @@ export default function Home() {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
     const element = document.querySelector(".story-preview") as HTMLElement | null;
+    // PDF dimensions and conversion factors
+    const marginPt = 40;
+    const pageWidth = doc.internal.pageSize.getWidth(); // in pt
+    const usablePt = pageWidth - marginPt * 2;          // in pt
+    const pxPerPt = 96 / 72;
+    const usablePx = usablePt * pxPerPt;                // in px
+
     if (element) {
-      // Clone and override styles to ensure dark-on-light PDF
+      // Clone and apply simple, left-aligned styling for html2canvas
       const clone = element.cloneNode(true) as HTMLElement;
-      // Set white background and black text
-      clone.style.backgroundColor = "#ffffff";
-      clone.style.color = "#000000";
-      clone.querySelectorAll("*").forEach((el) => {
-        (el as HTMLElement).style.color = "#000000";
+      clone.style.cssText = `
+        background: #fff;
+        color: #000;
+        text-align: left;
+        width: ${usablePx}px;
+        white-space: normal;
+        word-wrap: break-word;
+      `;
+      clone.querySelectorAll<HTMLElement>("*").forEach(el => {
+        el.style.whiteSpace = "normal";
+        el.style.wordWrap   = "break-word";
+        el.style.color      = "#000";
+        el.style.textAlign  = "left";
       });
-      // Prepare a wrapper for margins
+
       const wrapper = document.createElement("div");
-      wrapper.style.backgroundColor = "#ffffff";
       wrapper.appendChild(clone);
-      // Define page margins and compute usable width
-      const margin = 40;
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const usableWidth = pageWidth - margin * 2;
-      // Force the wrapper to span the full usable width for html2canvas
-      wrapper.style.width = `${usableWidth}px`;
+
       await doc.html(wrapper, {
+        x: marginPt,
+        y: marginPt,
+        width: usablePt,
+        windowWidth: usablePx,
+        html2canvas: { backgroundColor: "#fff", scale: 1 },
         callback: (pdf) => pdf.save("story.pdf"),
-        x: margin,
-        y: margin,
-        // target width in PDF units
-        width: usableWidth,
-        // align html2canvas render width
-        windowWidth: usableWidth,
-        html2canvas: { backgroundColor: "#ffffff" },
       });
     } else {
-      // Fallback to plain text if element not found
-      doc.setTextColor(0, 0, 0);
+      // Plain-text fallback with natural jsPDF wrapping
       const text = storyPreview.replace(/<[^>]+>/g, "");
-      doc.text(text, 40, 40);
+      const lines = doc.splitTextToSize(text, usablePt);
+      doc.text(lines, marginPt, marginPt);
       doc.save("story.pdf");
     }
   }, [storyPreview]);
