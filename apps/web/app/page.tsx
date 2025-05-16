@@ -1,6 +1,6 @@
 "use client";
 import { FaGithub, FaSpinner } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "./page.module.css";
 import InitialForm, {
   InitialFormInputs,
@@ -147,6 +147,30 @@ export default function Home() {
     }
   }, [storyPreview])
 
+  // Handler to download story preview as PDF
+  const handleDownload = useCallback(async () => {
+    if (!storyPreview) return;
+
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+    const element = document.querySelector(".story-preview") as HTMLElement | null;
+    if (element) {
+      await doc.html(element, {
+        callback: (pdf) => {
+          pdf.save("story.pdf");
+        },
+        x: 10,
+        y: 10,
+      });
+    } else {
+      // Fallback to plain text if element not found
+      const text = storyPreview.replace(/<[^>]+>/g, "");
+      doc.text(text, 10, 10);
+      doc.save("story.pdf");
+    }
+  }, [storyPreview]);
+
   // Child forms set their own hidden values via useEffect internally
 
   return (
@@ -192,7 +216,7 @@ export default function Home() {
           >
             <h4>All Done!</h4>
             <p>You completed story is here ready for you to download.</p>
-            <Button>Download Story PDF</Button>
+            <Button onClick={handleDownload}>Download Story PDF</Button>
           </div>
         </aside>
 
