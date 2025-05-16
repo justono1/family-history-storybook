@@ -152,21 +152,35 @@ export default function Home() {
     if (!storyPreview) return;
 
     const { jsPDF } = await import("jspdf");
+    // Create PDF with points (pt) unit and A4 size
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
     const element = document.querySelector(".story-preview") as HTMLElement | null;
     if (element) {
-      await doc.html(element, {
-        callback: (pdf) => {
-          pdf.save("story.pdf");
-        },
-        x: 10,
-        y: 10,
+      // Clone and override styles to ensure dark-on-light PDF
+      const clone = element.cloneNode(true) as HTMLElement;
+      // Set white background and black text
+      clone.style.backgroundColor = "#ffffff";
+      clone.style.color = "#000000";
+      clone.querySelectorAll("*").forEach((el) => {
+        (el as HTMLElement).style.color = "#000000";
+      });
+      // Prepare a wrapper for margins
+      const wrapper = document.createElement("div");
+      wrapper.style.backgroundColor = "#ffffff";
+      wrapper.appendChild(clone);
+      await doc.html(wrapper, {
+        callback: (pdf) => pdf.save("story.pdf"),
+        x: 0,
+        y: 0,
+        margin: [40, 40, 40, 40],
+        html2canvas: { backgroundColor: "#ffffff", scale: 1 },
       });
     } else {
       // Fallback to plain text if element not found
+      doc.setTextColor(0, 0, 0);
       const text = storyPreview.replace(/<[^>]+>/g, "");
-      doc.text(text, 10, 10);
+      doc.text(text, 40, 40);
       doc.save("story.pdf");
     }
   }, [storyPreview]);
