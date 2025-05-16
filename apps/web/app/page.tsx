@@ -169,12 +169,21 @@ export default function Home() {
       const wrapper = document.createElement("div");
       wrapper.style.backgroundColor = "#ffffff";
       wrapper.appendChild(clone);
+      // Define page margins and compute usable width
+      const margin = 40;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const usableWidth = pageWidth - margin * 2;
+      // Force the wrapper to span the full usable width for html2canvas
+      wrapper.style.width = `${usableWidth}px`;
       await doc.html(wrapper, {
         callback: (pdf) => pdf.save("story.pdf"),
-        x: 0,
-        y: 0,
-        margin: [40, 40, 40, 40],
-        html2canvas: { backgroundColor: "#ffffff", scale: 1 },
+        x: margin,
+        y: margin,
+        // target width in PDF units
+        width: usableWidth,
+        // align html2canvas render width
+        windowWidth: usableWidth,
+        html2canvas: { backgroundColor: "#ffffff" },
       });
     } else {
       // Fallback to plain text if element not found
