@@ -36,6 +36,13 @@ export default function StoryFeedbackForm({
   // subscribe to changes on isSatisfied
   const isSatisfied = watch("isSatisfied");
 
+  // wrap submit handler to clear feedback textarea after successful submit
+  const onFormSubmit: SubmitHandler<StoryFeedbackFormInputs> = async (data) => {
+    await onSubmit(data);
+    // clear textarea for next input
+    setValue("feedback", "");
+  };
+
   useEffect(() => {
     if (runId) {
       setValue("runId", runId);
@@ -47,7 +54,7 @@ export default function StoryFeedbackForm({
   }, [runId, previousResponse, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onFormSubmit)}>
       <h4>Story Feedback</h4>
       <p>
         We have generated an initial story based on the information you

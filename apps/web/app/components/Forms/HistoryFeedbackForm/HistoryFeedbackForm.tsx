@@ -36,6 +36,13 @@ export default function HistoryFeedbackForm({
   // subscribe to changes on isSatisfied
   const isSatisfied = watch("isSatisfied");
 
+  // wrap submit handler to clear feedback textarea after successful submit
+  const onFormSubmit: SubmitHandler<HistoryFeedbackFormInputs> = async (data) => {
+    await onSubmit(data);
+    // clear textarea for next input
+    setValue("feedback", "");
+  };
+
   useEffect(() => {
     if (runId) {
       setValue("runId", runId);
@@ -47,7 +54,7 @@ export default function HistoryFeedbackForm({
   }, [runId, previousResponse, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onFormSubmit)}>
       <h4>History Feedback</h4>
       <p>
         Review the text on the right. We have more questions and ideas that you
