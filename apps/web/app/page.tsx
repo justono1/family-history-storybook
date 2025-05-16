@@ -185,10 +185,13 @@ export default function Home() {
       wrapper.appendChild(clone);
 
       await doc.html(wrapper, {
-        x: marginPt,
-        y: marginPt,
+        // Apply uniform margins on all sides (top, left, bottom, right)
+        margin: [marginPt, marginPt, marginPt, marginPt],
+        // PDF content width in points and HTML render width in CSS pixels
         width: usablePt,
         windowWidth: usablePx,
+        // Break pages at text boundaries to avoid cutting words
+        autoPaging: 'text',
         html2canvas: { backgroundColor: "#fff", scale: 1 },
         callback: (pdf) => pdf.save("story.pdf"),
       });
