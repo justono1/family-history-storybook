@@ -1,6 +1,6 @@
 "use client";
 import { FaGithub, FaSpinner } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "./page.module.css";
 import InitialForm, {
   InitialFormInputs,
@@ -147,6 +147,63 @@ export default function Home() {
     }
   }, [storyPreview])
 
+  // Handler to download story preview as PDF
+  const handleDownload = useCallback(async () => {
+    if (!storyPreview) return;
+
+    const { jsPDF } = await import("jspdf");
+    // Create PDF with points (pt) unit and A4 size
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+    const element = document.querySelector(".story-preview") as HTMLElement | null;
+    // PDF dimensions and conversion factors
+    const marginPt = 40;
+    const pageWidth = doc.internal.pageSize.getWidth(); // in pt
+    const usablePt = pageWidth - marginPt * 2;          // in pt
+    const pxPerPt = 96 / 72;
+    const usablePx = usablePt * pxPerPt;                // in px
+
+    if (element) {
+      // Clone and apply simple, left-aligned styling for html2canvas
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.style.cssText = `
+        background: #fff;
+        color: #000;
+        text-align: left;
+        width: ${usablePx}px;
+        white-space: normal;
+        word-wrap: break-word;
+      `;
+      clone.querySelectorAll<HTMLElement>("*").forEach(el => {
+        el.style.whiteSpace = "normal";
+        el.style.wordWrap   = "break-word";
+        el.style.color      = "#000";
+        el.style.textAlign  = "left";
+      });
+
+      const wrapper = document.createElement("div");
+      wrapper.appendChild(clone);
+
+      await doc.html(wrapper, {
+        // Apply uniform margins on all sides (top, left, bottom, right)
+        margin: [marginPt, marginPt, marginPt, marginPt],
+        // PDF content width in points and HTML render width in CSS pixels
+        width: usablePt,
+        windowWidth: usablePx,
+        // Break pages at text boundaries to avoid cutting words
+        autoPaging: 'text',
+        html2canvas: { backgroundColor: "#fff", scale: 1 },
+        callback: (pdf) => pdf.save("story.pdf"),
+      });
+    } else {
+      // Plain-text fallback with natural jsPDF wrapping
+      const text = storyPreview.replace(/<[^>]+>/g, "");
+      const lines = doc.splitTextToSize(text, usablePt);
+      doc.text(lines, marginPt, marginPt);
+      doc.save("story.pdf");
+    }
+  }, [storyPreview]);
+
   // Child forms set their own hidden values via useEffect internally
 
   return (
@@ -192,7 +249,7 @@ export default function Home() {
           >
             <h4>All Done!</h4>
             <p>You completed story is here ready for you to download.</p>
-            <Button>Download Story PDF</Button>
+            <Button onClick={handleDownload}>Download Story PDF</Button>
           </div>
         </aside>
 
