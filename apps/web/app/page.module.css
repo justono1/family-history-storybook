@@ -99,3 +99,6 @@
 .spinnerIcon {
   animation: spin 1s linear infinite;
 }
+.storyPreview {
+  scroll-margin-top: 80px;
+}

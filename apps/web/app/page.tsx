@@ -1,6 +1,6 @@
 "use client";
 import { FaGithub, FaSpinner } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import InitialForm, {
   InitialFormInputs,
@@ -137,6 +137,16 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (storyPreview) {
+      // Scroll to top of <div dangerouslySetInnerHTML={{ __html: storyPreview! }} />
+      const storyPreviewDiv = document.querySelector(".story-preview");
+      if (storyPreviewDiv) {
+        storyPreviewDiv.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [storyPreview])
+
   // Child forms set their own hidden values via useEffect internally
 
   return (
@@ -199,7 +209,7 @@ export default function Home() {
                   <hr className={styles.divider} />
                   {/* Render HTML from storyPreview */}
                   {/* Hackathon deserves some danger */}
-                  <div dangerouslySetInnerHTML={{ __html: storyPreview! }} />
+                  <div className={["story-preview", styles.storyPreview].join(" ")} dangerouslySetInnerHTML={{ __html: storyPreview! }} />
                 </>
               )}
             </div>
